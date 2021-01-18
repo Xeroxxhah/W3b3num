@@ -2,7 +2,9 @@
 A W3b enumeration Script.this tool features subdomain test,directory enumeration and simple nmap scan
 .
 A simple Python Script for web enumeration  
+
+USAGE::
 ```
-USAGE:: python3 app.py <host>  
+python3 app.py <host>  
   
 ```
