@@ -11,7 +11,11 @@ import ssl
 from certifier import CertInfo
 import dns.resolver
 import whois
+from rich import print,pretty
+from time import sleep
 
+# Executing rich's pretty method
+pretty.install()
 
 VERSION = '2.0.0'
 BANNER = f'''
@@ -21,7 +25,7 @@ BANNER = f'''
 ░░████╔═████║░░╚═══██╗██╔══██╗░╚═══██╗██║╚████║██║░░░██║██║╚██╔╝██║
 ░░╚██╔╝░╚██╔╝░██████╔╝██████╦╝██████╔╝██║░╚███║╚██████╔╝██║░╚═╝░██║
 ░░░╚═╝░░░╚═╝░░╚═════╝░╚═════╝░╚═════╝░╚═╝░░╚══╝░╚═════╝░╚═╝░░░░░╚═╝
-                                                            v{VERSION} by Xeroxxhah
+[purple]A simple Web Enumeration Script for Pentests[purple]                  v{VERSION} by Xeroxxhah
 '''
 
 
@@ -31,7 +35,7 @@ def seprateProtocol(url):
     elif 'http' == url[:4]:
         return url[:4]
     else:
-        print('Wrong url format\nformat: https://www.example.com')
+        print('[red]Wrong url format[/red]\n[green]format: https://www.example.com[/green]')
         quit()
 
 def striphost(url):
@@ -71,11 +75,10 @@ def getcertinfo(url):
 
 def getdnsinfo(url):
     try:
-        arec = dns.resolver.query(url, 'A')
-        aaaarec = dns.resolver.query(url, 'AAAA')
-        nsrec = dns.resolver.query(url, 'NS')
-        mxrec = dns.resolver.query(url, 'MX')
-
+        arec = dns.resolver.resolve(url, 'A')
+        aaaarec = dns.resolver.resolve(url, 'AAAA')
+        nsrec = dns.resolver.resove(url, 'NS')
+        mxrec = dns.resolver.resolve(url, 'MX')
         print("\nA Record:")
         for x in arec:
             print(x)
@@ -103,10 +106,19 @@ def getsubdomain(url):
     protocol = seprateProtocol(url)
     #https://www.bahria.edu.pk
     #https://www.google.com
+    #https://google.com
     if len(url.split('.')) > 3:
         formated_host = url.split('.')[1] + '.' + url.split('.')[2] + '.' + url.split('.')[3]
     else:
-        formated_host = url.split('.')[1] + '.' + url.split('.')[2]
+        try:
+            formated_host = url.split('.')[1] + '.' + url.split('.')[2]
+        except IndexError:
+                try:
+                    formated_host = url.split('//')[1]
+                except Exception:
+                    print("[red]Error:Bad Format[/red]\nUsage:w3b3num.py https://www.example.com")      
+    print(f"[green]Host:{formated_host}[/green]")            
+
     
     with open('subdomains.txt') as subfile:
         content = subfile.read()
@@ -114,35 +126,46 @@ def getsubdomain(url):
         for subdomain in subdomains:
             re_url = f'{protocol}://{subdomain}.{formated_host}'
             try:
-                requests.get(re_url)
-            except:
-                pass
-            else:
+                requests.get(re_url,stream=True,timeout=0.9)
                 print('[+]',re_url)
+            except Exception:
+                pass
+                
 
 
 
 
 def main():
-    print(BANNER)
+    print(f"[red]{BANNER}[/red]")
     host = ''
     if  len(sys.argv)  != 2:
-        print(f"{sys.argv[0]} <host>")
+        print("[red]Url operand missing[/red]")
+        print(f"Usage:{sys.argv[0]} <host>")
         quit()
     else:
         host = sys.argv[1]
-
-    print('Header')
+    sleep(2)
+    print('[purple bold]Header Meta Data:[/purple bold]')    
+    print('[purple]-----------------------------------------------------------------------------[/purple]')
     getHeader(host)
-    print('Certificate Inforamtion')
+    print('[purple]-----------------------------------------------------------------------------[/purple]')
+    print('[blue bold]Certificate Inforamtion:[/blue bold]')
+    print('[blue]-----------------------------------------------------------------------------[/blue]')
     getcertinfo(striphost(host))
-    print('DNS Record')
+    print('[blue]-----------------------------------------------------------------------------[/blue]')
+    print('[red bold]DNS Record:[/red bold]')
+    print('[red]-----------------------------------------------------------------------------[/red]')
     getdnsinfo(striphost(host))
-    print('\nWhois Information')
+    print('[red]-----------------------------------------------------------------------------[/red]')
+    print('\n[green bold]Whois Information:[/green bold]')
+    print('[green]-----------------------------------------------------------------------------[/green]')
     print(getwhoisinfo(striphost(host)))
-    print('\nSubdomains')
+    print('[green]-----------------------------------------------------------------------------[/green]')
+    print('\n[cyan bold]Subdomains:[/cyan bold]')
+    print('[cyan]-----------------------------------------------------------------------------[/cyan]')
     getsubdomain(host)
-
+    print('[cyan]-----------------------------------------------------------------------------[/cyan]')
+    
 
 
 
