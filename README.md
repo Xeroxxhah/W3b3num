@@ -5,6 +5,6 @@ A simple Python Script for web enumeration
 
 USAGE::
 ```
-python3 app.py <host>  
+python3 w3b3num.py <host>  
   
 ```
