@@ -1,8 +1,0 @@
-socket
-sys
-openpyxl 
-urllib.request
-argparse
-requests
-nmap
-os
