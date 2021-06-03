@@ -1,3 +1,5 @@
 python-whois
 dnspython
 certifier
+requests
+rich
