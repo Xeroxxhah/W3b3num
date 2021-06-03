@@ -75,10 +75,10 @@ def getcertinfo(url):
 
 def getdnsinfo(url):
     try:
-        arec = dns.resolver.resolve(url, 'A')
-        aaaarec = dns.resolver.resolve(url, 'AAAA')
-        nsrec = dns.resolver.resove(url, 'NS')
-        mxrec = dns.resolver.resolve(url, 'MX')
+        arec = dns.resolver.query(url, 'A')
+        aaaarec = dns.resolver.query(url, 'AAAA')
+        nsrec = dns.resolver.query(url, 'NS')
+        mxrec = dns.resolver.query(url, 'MX')
         print("\nA Record:")
         for x in arec:
             print(x)
@@ -104,9 +104,6 @@ def getwhoisinfo(url):
 
 def getsubdomain(url):
     protocol = seprateProtocol(url)
-    #https://www.bahria.edu.pk
-    #https://www.google.com
-    #https://google.com
     if len(url.split('.')) > 3:
         formated_host = url.split('.')[1] + '.' + url.split('.')[2] + '.' + url.split('.')[3]
     else:
@@ -126,7 +123,7 @@ def getsubdomain(url):
         for subdomain in subdomains:
             re_url = f'{protocol}://{subdomain}.{formated_host}'
             try:
-                requests.get(re_url,stream=True,timeout=0.9)
+                requests.get(re_url,stream=True,timeout=3)
                 print('[+]',re_url)
             except Exception:
                 pass
